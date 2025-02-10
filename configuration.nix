@@ -65,7 +65,7 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -90,7 +90,7 @@
       kdePackages.kate
       kdePackages.plasma-browser-integration
       kdePackages.kdenlive
-      cider
+      kdePackages.krdc
     ];
   };
 
@@ -105,7 +105,7 @@
   virtualisation.podman.enable = true;
 
   # Enable automatic login for the user.
-  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.enable = false;
   services.displayManager.autoLogin.user = "cole";
 
 
@@ -145,7 +145,7 @@
   distrobox
   boxbuddy
   podman
-  python311Packages.pipx
+  python39Packages.pipx
   kdePackages.partitionmanager
   ];
 
