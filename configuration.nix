@@ -61,6 +61,20 @@
     variant = "";
   };
 
+  #Mount HDD
+  fileSystems."/mnt/HDD" = {
+    device = "/dev/disk/by-uuid/84d94213-f39a-4fd7-a9c9-3e38d5dded35";
+    fsType = "ext4";  # Change this according to your file system (e.g., "btrfs", "xfs", "ntfs-3g")
+    options = [ "defaults" ];  # Optional: add mount options
+  };
+
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    # Add any missing dynamic libraries for unpackaged programs
+    # here, NOT in environment.systemPackages
+  ];
+
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
@@ -134,8 +148,7 @@
   killall
   ktailctl
   tailscale
-  vmware-workstation
-  ventoy
+  ventoy-full
   appimage-run
   vscode-fhs
   uv
@@ -147,6 +160,8 @@
   podman
   python39Packages.pipx
   kdePackages.partitionmanager
+  fusee-launcher
+  everest-mons
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
