@@ -134,7 +134,6 @@
     python310
     distrobox
     boxbuddy
-    podman
     kdePackages.partitionmanager
     fusee-launcher
     everest-mons
@@ -144,5 +143,5 @@
   services.printing.enable = true;
 
   ## ----------------- System State Version -----------------
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }
