@@ -1,83 +1,47 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [ ./hardware-configuration.nix ];
 
-  # Bootloader.
+  ## ----------------- Boot Configuration -----------------
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot";  # important
-  boot.loader.timeout = 5;                     # show boot menu for 5 seconds
+  boot.loader.efi.efiSysMountPoint = "/boot";
+  boot.loader.timeout = 5;
   boot.supportedFilesystems = [ "ntfs" ];
 
-  # Hostname
-  networking.hostName = "Cole-Laptop"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-
-  # Enable networking
+  ## ----------------- Host & Time Settings -----------------
+  networking.hostName = "Cole-Laptop";
   networking.networkmanager.enable = true;
-
-  # Enable Waydroid
-  virtualisation.waydroid.enable = true;
-
-  # Set your time zone.
   time.timeZone = "America/Chicago";
 
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
+    LC_ALL = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
   };
-  # Enable and startup bluetooth
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = false;
-
-  # Enable the KDE Plasma Desktop Environment.
+  ## ----------------- Wayland + Plasma 6 -----------------
+  services.xserver.enable = true;  # REQUIRED even for Wayland sessions
   services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
   services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.defaultSession = "plasma";
+  services.desktopManager.plasma6.enable = true;
 
-
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  
-
-  programs.nix-ld.enable = true;
-  programs.nix-ld.libraries = with pkgs; [
-    # Add any missing dynamic libraries for unpackaged programs
-    # here, NOT in environment.systemPackages
-  ];
-
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound with pipewire.
+  ## ----------------- Sound (PipeWire) -----------------
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -85,131 +49,100 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  ## ----------------- Bluetooth -----------------
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+
+  ## ----------------- User Setup -----------------
   users.users.cole = {
     isNormalUser = true;
     description = "Cole Yokley";
-    extraGroups = [ "networkmanager" "wheel" "input" "libvirtd" "podman"];
     shell = pkgs.zsh;
+    extraGroups = [ "networkmanager" "wheel" "input" "libvirtd" "podman" ];
     packages = with pkgs; [
       kdePackages.kate
-      kdePackages.plasma-browser-integration
       kdePackages.kdenlive
       kdePackages.krdc
+      kdePackages.plasma-browser-integration
     ];
   };
 
-  # Enable Tailscale
-  services.tailscale.enable = true;
+  ## ----------------- Nix-ld -----------------
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [ ];
 
-  # Enable Steam
-  programs.steam.enable = true;
-
-  # Enable virtualisation and Podman
-  virtualisation.libvirtd.enable = true;
-  virtualisation.podman.enable = true;
-
-  # Enable automatic login for the user.
-  services.displayManager.autoLogin.enable = false;
-  services.displayManager.autoLogin.user = "cole";
-
-
-  # Enable Logitech Hardware
-  hardware.logitech.wireless.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  google-chrome
-  zsh
-  oh-my-posh
-  git
-  waydroid
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-  solaar
-  logitech-udev-rules
-  zoxide
-  virt-manager
-  libvirt
-  killall
-  ktailctl
-  tailscale
-  appimage-run
-  vscode-fhs
-  uv
-  gcc
-  checkra1n
-  python310
-  distrobox
-  boxbuddy
-  podman
-  kdePackages.partitionmanager
-  fusee-launcher
-  everest-mons
-  ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # sudo NOPASSWD
-    security.sudo.wheelNeedsPassword = false;
-    environment.etc."polkit-1/rules.d/99-wheel-bypass.rules".text = ''
-  polkit.addRule(function(action, subject) {
-      if (subject.isInGroup("wheel")) {
-          return "yes";
-      }
-  });
-'';
-  #Oh-My-Posh and Oh-My-Zsh
+  ## ----------------- Shell Enhancements -----------------
   programs.zsh = {
     enable = true;
     ohMyZsh.enable = true;
-    ohMyZsh.plugins = [ "git" "z" "zoxide" "sudo" "tailscale" "vscode" "virtualenv"];
+    ohMyZsh.plugins = [ "git" "z" "zoxide" "sudo" "tailscale" "vscode" "virtualenv" ];
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
     enableCompletion = true;
+  };
 
-};
   environment.etc."zshrc".text = ''
     eval "$(oh-my-posh init zsh --config https://raw.githubusercontent.com/Fosymer/Oh-My-Posh-Config/main/Config.yaml)"
   '';
 
+  ## ----------------- Virtualization -----------------
+  virtualisation.libvirtd.enable = true;
+  virtualisation.podman.enable = true;
+  virtualisation.waydroid.enable = true;
 
-  # List services that you want to enable:
+  ## ----------------- Networking / Tools -----------------
+  services.tailscale.enable = true;
+  programs.steam.enable = true;
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  ## ----------------- Logitech -----------------
+  hardware.logitech.wireless.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  ## ----------------- Sudo NOPASSWD -----------------
+  security.sudo.wheelNeedsPassword = false;
+  environment.etc."polkit-1/rules.d/99-wheel-bypass.rules".text = ''
+    polkit.addRule(function(action, subject) {
+      if (subject.isInGroup("wheel")) {
+        return "yes";
+      }
+    });
+  '';
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+  ## ----------------- Misc System Packages -----------------
+  environment.systemPackages = with pkgs; [
+    google-chrome
+    zsh
+    oh-my-posh
+    git
+    waydroid
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    solaar
+    logitech-udev-rules
+    zoxide
+    virt-manager
+    libvirt
+    killall
+    ktailctl
+    tailscale
+    appimage-run
+    vscode-fhs
+    uv
+    gcc
+    checkra1n
+    python310
+    distrobox
+    boxbuddy
+    podman
+    kdePackages.partitionmanager
+    fusee-launcher
+    everest-mons
+  ];
 
+  ## ----------------- Optional Services -----------------
+  services.printing.enable = true;
+
+  ## ----------------- System State Version -----------------
+  system.stateVersion = "24.11";
 }
