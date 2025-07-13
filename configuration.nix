@@ -192,7 +192,7 @@
 
 };
   environment.etc."zshrc".text = ''
-    eval "$(oh-my-posh init zsh --config https://raw.githubusercontent.com/nightwolf2100/Oh-My-Posh-Config/main/Config.yaml)"
+    eval "$(oh-my-posh init zsh --config https://raw.githubusercontent.com/Fosymer/Oh-My-Posh-Config/main/Config.yaml)"
   '';
 
 
