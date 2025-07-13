@@ -15,13 +15,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";  # important
   boot.loader.timeout = 5;                     # show boot menu for 5 seconds
-  boot.loader.entries = {
-    "windows.conf" = {
-      loader = "/EFI/Microsoft/Boot/bootmgfw.efi";
-      description = "Windows Boot Manager";
-    };
-  };
+  boot.supportedFilesystems = [ "ntfs" ];
 
+  # Hostname
   networking.hostName = "Cole-Laptop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -151,7 +147,6 @@
   killall
   ktailctl
   tailscale
-  ventoy-full
   appimage-run
   vscode-fhs
   uv
@@ -161,7 +156,6 @@
   distrobox
   boxbuddy
   podman
-  python39Packages.pipx
   kdePackages.partitionmanager
   fusee-launcher
   everest-mons
