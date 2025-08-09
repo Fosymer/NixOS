@@ -3,14 +3,15 @@
 {
   imports = [ ./hardware-configuration.nix ];
 
-  ## ----------------- Boot Configuration -----------------
+
+  ## Boot Configuration
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
   boot.loader.timeout = 5;
   boot.supportedFilesystems = [ "ntfs" ];
 
-  ## ----------------- Host & Time Settings -----------------
+  ##  Host & Time Settings
   networking.hostName = "Cole-Laptop";
   networking.networkmanager.enable = true;
   time.timeZone = "America/Chicago";
@@ -29,10 +30,9 @@
     LC_IDENTIFICATION = "en_US.UTF-8";
   };
 
-  ## ----------------- Wayland + Plasma 6 -----------------
-  services.xserver.enable = true;  # REQUIRED even for Wayland sessions
+  ## Wayland + Plasma 6
+  services.xserver.enable = false;
   services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
   services.displayManager.defaultSession = "plasma";
   services.desktopManager.plasma6.enable = true;
 
@@ -41,7 +41,7 @@
     variant = "";
   };
 
-  ## ----------------- Sound (PipeWire) -----------------
+  ## Sound (PipeWire)
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -51,12 +51,12 @@
     pulse.enable = true;
   };
 
-  ## ----------------- Bluetooth -----------------
+  ## Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
 
-  ## ----------------- User Setup -----------------
-  users.users.cole = {
+  ## User Setup
+    users.users.cole = {
     isNormalUser = true;
     description = "Cole Yokley";
     shell = pkgs.zsh;
@@ -69,11 +69,11 @@
     ];
   };
 
-  ## ----------------- Nix-ld -----------------
+  ## Nix-ld
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [ ];
 
-  ## ----------------- Shell Enhancements -----------------
+  ## Shell Enhancements
   programs.zsh = {
     enable = true;
     ohMyZsh.enable = true;
@@ -87,19 +87,22 @@
     eval "$(oh-my-posh init zsh --config https://raw.githubusercontent.com/Fosymer/Oh-My-Posh-Config/main/Config.yaml)"
   '';
 
-  ## ----------------- Virtualization -----------------
+  ## Allow Unfree Packages
+  nixpkgs.config.allowUnfree = true;
+
+  ## Virtualization
   virtualisation.libvirtd.enable = true;
   virtualisation.podman.enable = true;
   virtualisation.waydroid.enable = true;
 
-  ## ----------------- Networking / Tools -----------------
+  ## Networking / Tools
   services.tailscale.enable = true;
   programs.steam.enable = true;
 
-  ## ----------------- Logitech -----------------
+  ## Logitech
   hardware.logitech.wireless.enable = true;
 
-  ## ----------------- Sudo NOPASSWD -----------------
+  ## Sudo NOPASSWD
   security.sudo.wheelNeedsPassword = false;
   environment.etc."polkit-1/rules.d/99-wheel-bypass.rules".text = ''
     polkit.addRule(function(action, subject) {
@@ -109,7 +112,7 @@
     });
   '';
 
-  ## ----------------- Misc System Packages -----------------
+  ## Misc System Packages
   environment.systemPackages = with pkgs; [
     google-chrome
     zsh
@@ -130,18 +133,31 @@
     vscode-fhs
     uv
     gcc
-    checkra1n
     python310
     distrobox
-    boxbuddy
     kdePackages.partitionmanager
-    fusee-launcher
     everest-mons
+    nil
+    pipx
+    libimobiledevice
+    glibc
+    libglibutil
+    pmbootstrap
+    nix-index
+    rpi-imager
   ];
 
-  ## ----------------- Optional Services -----------------
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 5d";
+  };
+
+
+  ## Optional Services
   services.printing.enable = true;
 
-  ## ----------------- System State Version -----------------
+  ## System State Version
   system.stateVersion = "25.05";
 }
